@@ -62,9 +62,18 @@ docker exec -it shop-backup-php-fpm bash
 php artisan shop:backup
 ```
 
-### 2. Automated Execution (Job)
+### 2. Automated Execution (Job & Queue)
 
-The backup job is scheduled to run daily via the Laravel scheduler and cron. The scheduler configuration can be found in `bootstrap/app.php`.
+The backup job is scheduled to run daily via the Laravel scheduler and cron. The scheduler configuration can be found in `bootstrap/app.php`. Once scheduled, jobs are added to the queue for processing.
+
+The application uses Supervisor to manage and monitor the Laravel queue workers, ensuring that backup jobs in the queue are processed reliably. Supervisor automatically restarts queue workers if they fail, providing robust job processing.
+
+## Batch Fetching
+
+The application fetches shop data in batches to optimize API calls and memory usage. This behavior can be configured through the environment variable:
+```SHOP_BATCH_SIZE_LIMIT=1000```
+
+You can adjust this value in your `.env` file to optimize performance based on your specific third-party shop API limitations and response times. Feel free to experiment with different batch sizes to find the optimal configuration for your use case, as performance may vary depending on the third-party shop API's capabilities and rate limits.
 
 ## Rate Limit Handling
 
@@ -72,9 +81,11 @@ The application includes a rate limit handler that ensures API requests do not e
 
 Rate limit settings can be configured through the .env file:
 
+```bash
 SHOP_API_RATE_LIMIT: Maximum number of requests allowed
 SHOP_API_TIME_WINDOW: Time window in seconds for the rate limit
 SHOP_API_RATE_AFTER_HEADER: Header that contains retry-after information
+```
 
 ## Logging
 
