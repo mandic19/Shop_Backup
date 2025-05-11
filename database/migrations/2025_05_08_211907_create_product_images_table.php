@@ -1,24 +1,19 @@
 <?php
 
+use App\Support\BlueprintMacros;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
     public function up(): void
     {
-        Schema::create('product_images', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->uuid('product_id');
-            $table->uuid('product_uuid');
-            $table->string('url');
-            $table->timestamps();
-
-            $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
+        Schema::create('product_images', function (Blueprint|BlueprintMacros $table) {
+            $table->productImageTableFields();
+            $table->addProductImageForeignKey('product_id', 'products');
         });
     }
 

@@ -1,5 +1,6 @@
 <?php
 
+use App\Support\BlueprintMacros;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -11,13 +12,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('products', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->uuid('product_uuid')->unique();
-            $table->string('name');
-            $table->string('product_handle')->unique();
-            $table->decimal('product_price', 10);
-            $table->timestamps();
+        Schema::create('products', function (BlueprintMacros|Blueprint $table) {
+            $table->productTableFields();
         });
     }
 

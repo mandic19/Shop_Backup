@@ -1,5 +1,6 @@
 <?php
 
+use App\Support\BlueprintMacros;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -11,14 +12,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('variant_images', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->uuid('variant_id');
-            $table->uuid('variant_uuid');
-            $table->string('url');
-            $table->timestamps();
-
-            $table->foreign('variant_id')->references('id')->on('variants')->onDelete('cascade');
+        Schema::create('variant_images', function (Blueprint|BlueprintMacros $table) {
+            $table->variantImageTableFields();
+            $table->addVariantImageForeignKey('variant_id', 'variants');
         });
     }
 
