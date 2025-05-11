@@ -35,4 +35,11 @@ return [
         ],
     ],
 
+    'shop' => [
+        'api_url' => env('SHOP_API_URL', 'http://host.docker.internal/api'),
+        'rate_limit' => env('SHOP_API_RATE_LIMIT', 3),
+        'time_window' => env('SHOP_API_TIME_WINDOW', 60),
+        'retry_after_header' => env('SHOP_API_RETRY_AFTER_HEADER', 'Retry-After'),
+        'batch_size_limit' => env('SHOP_BATCH_SIZE_LIMIT', 1000)
+    ],
 ];
