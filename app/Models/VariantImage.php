@@ -11,6 +11,8 @@ class VariantImage extends Model
 {
     use HasFactory, HasUuids;
 
+    public $timestamps = false;
+
     protected $fillable = [
         'id',
         'variant_id',
