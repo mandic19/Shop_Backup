@@ -5,6 +5,7 @@ This repository contains a Laravel-based Shop Backup application designed to cre
 ## System Requirements
 
 - Docker and Docker Compose (all other dependencies are handled within containers)
+- For Windows users: For better performance, consider cloning repositories in WSL directories instead of Windows-mounted directories when using Docker
 
 ## Project Setup
 
