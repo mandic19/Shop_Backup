@@ -11,8 +11,12 @@ php-fpm8.4 --daemonize
 echo "Starting cron service..."
 cron
 
-echo "All services started successfully!"
-echo "Watching cron log..."
+# Start supervisor
+echo "Starting supervisor..."
+/usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf
 
-# Keep container running and display logs
-exec tail -f /var/log/cron.log
+echo "All services started successfully!"
+echo "Watching logs..."
+
+# Keep container running and tail logs
+exec tail -f /var/log/cron.log /var/log/worker.out.log /var/log/worker.err.log

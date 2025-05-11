@@ -7,13 +7,20 @@ RUN apt-get update \
         php8.4-mysql \
         php8.4-bcmath \
         cron \
+        supervisor \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/* \
     && mkdir -p /etc/cron.d \
     && touch /var/log/cron.log
 
-# Copy crontab file and startup script
+
+# Create the supervisor configuration directory
+RUN mkdir -p /etc/supervisor/conf.d
+# Copy supervisor configuration for Laravel queue worker
+COPY ./supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+# Copy crontab file
 COPY crontab /etc/cron.d/crontab
+# Copy startup script
 COPY start.sh /start.sh
 
 # Setup permissions
