@@ -1,61 +1,98 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Shop Backup Application
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+This repository contains a Laravel-based Shop Backup application designed to create daily backups of shop data. The application runs in Docker containers with PHP 8.4 and the latest Laravel framework version.
 
-## About Laravel
+## System Requirements
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- Docker and Docker Compose (all other dependencies are handled within containers)
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Project Setup
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### 1. Clone the Repository
 
-## Learning Laravel
+```bash
+git clone https://github.com/mandic19/Shop_Backup.git
+cd shop_backup
+```
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+### 2. Environment Configuration
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+Create a `.env` file based on the provided example:
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+```bash
+cp .env.example .env
+```
 
-## Laravel Sponsors
+Make any necessary adjustments to the environment variables in the `.env` file before proceeding. Be sure to configure the database connection and API credentials properly.
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+### 3. Start Docker Containers
 
-### Premium Partners
+```bash
+docker-compose up -d
+```
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development/)**
-- **[Active Logic](https://activelogic.com)**
+### 4. Install Dependencies
 
-## Contributing
+Access the PHP-FPM container and install Composer dependencies:
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+```bash
+docker exec -it shop-backup-php-fpm bash
+composer install
+```
 
-## Code of Conduct
+### 5. Run Migrations
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Set up the database tables:
 
-## Security Vulnerabilities
+```bash
+docker exec -it shop-backup-php-fpm bash
+php artisan migrate
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+## Backup Process
+
+The Shop Backup application provides two ways to execute the backup process:
+
+### 1. Manual Execution (Command)
+
+To manually trigger a backup, run:
+
+```bash
+docker exec -it shop-backup-php-fpm bash
+php artisan shop:backup
+```
+
+### 2. Automated Execution (Job)
+
+The backup job is scheduled to run daily via the Laravel scheduler and cron. The scheduler configuration can be found in `bootstrap/app.php`.
+
+## Rate Limit Handling
+
+The application includes a rate limit handler that ensures API requests do not exceed the limit of 3 requests per minute. This handler manages the request flow to prevent API throttling while optimizing the backup process.
+
+Rate limit settings can be configured through the .env file:
+
+SHOP_API_RATE_LIMIT: Maximum number of requests allowed
+SHOP_API_TIME_WINDOW: Time window in seconds for the rate limit
+SHOP_API_RATE_AFTER_HEADER: Header that contains retry-after information
+
+## Logging
+
+All backup operations are logged using Laravel's logging system. Logs can be found in the `storage/logs/laravel.log` file. The application uses the stack channel as configured in the `config/logging.php` file.
+
+To view logs:
+
+```bash
+docker exec -it shop-backup-php-fpm bash
+tail -f storage/logs/laravel.log
+```
+
+## Configuration
+
+The application's behavior can be customized through various configuration files:
+
+- **config/services.php**: Contains Shop API configuration settings.
 
 ## License
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+This project is licensed under the MIT License - see the LICENSE file for details.
