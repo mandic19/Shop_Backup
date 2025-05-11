@@ -3,6 +3,11 @@ set -e
 
 echo "Starting services..."
 
+# Ensure correct permissions on Laravel directories
+echo "Setting up permissions..."
+chown -R www-data:www-data /application/storage /application/bootstrap/cache
+chmod -R 775 /application/storage /application/bootstrap/cache
+
 # Start PHP-FPM
 echo "Starting PHP-FPM..."
 php-fpm8.4 --daemonize
