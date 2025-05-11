@@ -13,7 +13,7 @@ This repository contains a Laravel-based Shop Backup application designed to cre
 
 ```bash
 git clone https://github.com/mandic19/Shop_Backup.git
-cd shop_backup
+cd Shop_Backup
 ```
 
 ### 2. Environment Configuration
@@ -61,6 +61,12 @@ To manually trigger a backup, run:
 ```bash
 docker exec -it shop-backup-php-fpm bash
 php artisan shop:backup
+```
+
+or 
+
+```bash
+docker exec -it shop-backup-php-fpm bash -c "php artisan shop:backup && tail -f storage/logs/laravel.log"
 ```
 
 ### 2. Automated Execution (Job & Queue)
